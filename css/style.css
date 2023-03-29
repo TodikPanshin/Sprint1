@@ -1,0 +1,56 @@
+body {
+    background-color: black;
+    color: white;
+    text-align: center;
+    color: brown;
+}
+
+.test-stuff{
+    color: bisque;
+}
+
+table {
+    margin: auto;
+}
+
+.cell {
+    width: 40px;
+    height: 40px;
+    font-size: 1.5em;
+    background-color: gray;
+}
+
+.marked {
+    background-color: rgb(145, 5, 128);
+
+}
+
+.shown{
+    background-color: antiquewhite;
+}
+
+.test{
+    background-color: aquamarine;
+}
+
+.modal {
+    display: none;
+    border: solid 3px grey;
+    width: 300px;
+    height: 200px;
+    background-color: rgb(222, 226, 228);
+    color: rgb(228, 0, 0);
+    font-size: 32px;
+  
+    position: absolute;
+    top: 200px;
+    left: calc(50% - 150px);
+  }
+
+  .restart-btn {
+    margin-top: 20px;
+    background-color: black;
+    color: rgb(230, 221, 221);
+    padding: 10px;
+    cursor: pointer;
+  }
