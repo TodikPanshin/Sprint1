@@ -89,6 +89,8 @@ function onlevel(levelInx = 1) {
         gLevel.mines = 32
 
     }
+    clearInterval(gShowTimeInterval)
+    clearInterval(gInterval)
     stopTimer()
     onCloseModalDifficulty()
 }
