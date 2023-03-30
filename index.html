@@ -10,13 +10,23 @@
 
 <body onload="onInit()">
 <h1>Doooom</h1>
+<div class="levels">
+    <button class="level" onclick="onInit(onlevel(1))">Beginner</button>
+    <button class="level" onclick="onInit(onlevel(2))">Medium</button>
+    <button class="level" onclick="onInit(onlevel(3))">Expert</button>
+</div>
 <div class="test-stuff" ></div>
+<div><button class="reset-btn" onclick="onReset()"></button>
+</div>
+
+<div class="life">Life Left: <span class="counter-life"></span></div>
+
 <div class="board-con"></div>
 
 <div class="modal">
     <h2>GAME OVER</h2>
-    <h2 class="end-state"></h2>
-    <button class="reset-btn"  onclick="onInitGame()">once more with feeling </button>
+    <h2 ></h2>
+    <!-- <button class="reset-btn"  onclick="onInit()">once more with feeling </button> -->
 </div>
 
 
