@@ -10,9 +10,11 @@ const BUTTON_CLICKED = '😺'
 var gBoard
 var gLevel
 var gGame
+var gPlayerHelp
 var gBoardIsShown = false
 var gtimeStart
 var gIntervalTime
+var gShowTimeInterval
 var gInterval
 var gResetBtnTimeout
 
@@ -26,22 +28,23 @@ function onInit() {
         lifeLeft: 3,
         secsPassed: 0
     }
-    if (!gLevel) onlevel()
-    // gLevel = {
-    //     SIZE: 8,
-    //     MINES: 5
-    //    }
+    gPlayerHelp = {
+        hintsCount: 3,
+        isHintOn: false
+    }
 
+    if (!gLevel) onlevel()
 
     resetBtn()
     lifeCount()
+    gShowTimeInterval = setInterval(showTime, 10)
     gBoard = buildBoard(gLevel)
     // showBoard()
     // addMines(2 )
     renderBoard(gBoard, '.board-con')
     // console.log(gBoard)
     disableClick()
-    gInterval = setInterval(renderStuff, 10)
+    gInterval = setInterval(renderTestStuff, 10)
 
 }
 
@@ -87,6 +90,7 @@ function onlevel(levelInx = 1) {
 
     }
     stopTimer()
+    onCloseModalDifficulty()
 }
 
 function buildBoard(level) {
@@ -140,12 +144,19 @@ function renderBoard(mat, selector) {
 function onCellClicked(elCell, i, j) {
     const currCell = gBoard[i][j]
     if (!gGame.isOn) return
+
+    if (gPlayerHelp.isHintOn) {
+        checkHint(gBoard, i, j)
+        onHintOff()
+        return
+    }
+
     if (currCell.isMarked) return
     if (!currCell.isShown && !currCell.isMine) {
         currCell.isShown = !currCell.isShown
         gGame.shownCount++
         if (gGame.secsPassed === 0) {
-            addMines(gLevel.mines,false)
+            addMines(gLevel.mines, false)
             timer()
         }
         expandShown(gBoard, i, j)
@@ -155,8 +166,9 @@ function onCellClicked(elCell, i, j) {
         currCell.isExploded = true
         gGame.markedcorrect++
         lifeCheck()
-
     }
+
+
     renderBoard(gBoard, '.board-con')
     // renderStuff()
     checkIfWin()
@@ -193,16 +205,19 @@ function resetBtn(style = BUTTON_DIF) {
 }
 
 function onReset() {
-    resetBtn(BUTTON_CLICKED)
+    // resetBtn(BUTTON_CLICKED)
     gGame.isOn = false
+    clearInterval(gShowTimeInterval)
+    clearInterval(gInterval)
     stopTimer()
     onInit()
 
 }
 
 function gameOver() {
-    console.log('End')
+    // console.log('End')
     gGame.isOn = false
+    clearInterval(gShowTimeInterval)
     clearInterval(gInterval)
     showBoard()
     stopTimer()
@@ -210,8 +225,9 @@ function gameOver() {
 
 function checkIfWin() {
     if (gGame.markedcorrect === gLevel.mines && gGame.shownCount === (gLevel.size ** 2) - gLevel.mines) {
+        clearTimeout(gResetBtnTimeout)
         resetBtn(BUTTON_WIN)
-        console.log('Win')
+        // console.log('Win')
         gameOver()
     }
 }
@@ -229,12 +245,12 @@ function expandShown(board, posi, posj) {
                 && !currCell.isMine) {
                 currCell.isShown = true
                 gGame.shownCount++
-                expandShown(board,i,j)
+                expandShown(board, i, j)
             }
 
         }
     }
-    
+
 }
 
 function setMinesNegsCount(posi, posj) {
@@ -296,6 +312,16 @@ function getCell() {
 
 }
 
+function onCloseModalDifficulty() {
+    const elModal = document.querySelector('.modal-difficulty')
+    elModal.style.display = 'none'
+}
+
+function onOpenModalDifficulty() {
+    var elModal = document.querySelector('.modal-difficulty')
+    elModal.style.display = 'block'
+}
+
 //>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 function showBoard() {
@@ -309,12 +335,17 @@ function showBoard() {
     }
 }
 
-function renderStuff() {
+function renderTestStuff() {
     var elDiv = document.querySelector('.test-stuff')
     // console.log(elDiv)
     elDiv.innerHTML = `shown cells: ${gGame.shownCount} marked cells: ${gGame.markedCount}
-     marked correct: ${gGame.markedcorrect} timer: ${gGame.secsPassed} `
+     marked correct: ${gGame.markedcorrect} `
 
+}
+
+function showTime() {
+    const elTime = document.querySelector('.counter-timer')
+    elTime.innerHTML = gGame.secsPassed
 }
 
 function timer() {
@@ -322,13 +353,14 @@ function timer() {
     // console.log(gtimeStart)
     gIntervalTime = setInterval(updateTimer, 10)
 }
+
 function stopTimer() {
     clearInterval(gIntervalTime)
 }
 
 function updateTimer() {
     var elapsedTime = Date.now() - gtimeStart
-    var seconds = Math.floor((elapsedTime % (1000 * 60)) / 1000)
+    var seconds = Math.floor((elapsedTime % (10000 * 60)) / 1000)
     var milliseconds = Math.floor((elapsedTime % 1000) / 10)
     gGame.secsPassed =
         formatTime(seconds) + ':' + formatTime(milliseconds)
@@ -338,23 +370,33 @@ function formatTime(time) {
     return (time < 10 ? '0' : '') + time
 }
 
-function disableClick() {
-    var elboard = document.querySelector('.board-con');
-    elboard.addEventListener('contextmenu', (ev) => {
-        ev.preventDefault(); // this will prevent browser default behavior 
-    })
-}
+// >>>>>>>>>>>unfinished
+function checkHint(board, posi, posj) {
+    const negBord = copyMat(board)
+    for (var i = posi - 1; i <= posi + 1; i++) {
+        if (i < 0 || i >= negBord.length) continue;
+        for (var j = posj - 1; j <= posj + 1; j++) {
+            if (j < 0 || j >= negBord[i].length) continue;
+            const currCell = negBord[i][j]
+            if (!currCell.isShown) currCell.isShown = true
+        }
+    } renderBoard(negBord, '.board-con')
+    setTimeout(() => {
+        renderBoard(gBoard, '.board-con')
+
+    }, 1000)
 
 
-function closeModal() {
-    const elModal = document.querySelector('.modal')
-    const elText = document.querySelector('.end-state')
-    elModal.style.display = 'none'
-    elText.innerHTML = 'YOU LOSE'
 }
 
-function openModal() {
-    console.log('lol')
-    var elModal = document.querySelector('.modal')
-    elModal.style.display = 'block'
+function onHintOn() {
+    console.log('on')
+    gPlayerHelp.isHintOn = true
+    
 }
+
+function onHintOff() {
+    console.log('off')
+    gPlayerHelp.isHintOn = false
+}
+

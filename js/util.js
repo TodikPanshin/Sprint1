@@ -32,3 +32,13 @@ function renderCell(locationI,locationJ, value) {
     elCell.innerHTML = value
 }
 
+function disableClick() {
+    var elboard = document.querySelector('.board-con');
+    elboard.addEventListener('contextmenu', (ev) => {
+        ev.preventDefault(); // this will prevent browser default behavior 
+    })
+}
+
+function onHandleKey(ev) {
+    if (ev.key === 'Escape') onCloseModalDifficulty()
+}

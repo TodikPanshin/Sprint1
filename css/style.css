@@ -8,16 +8,24 @@ body {
 
 .test-stuff{
     color: bisque;
-    display: inline
+    display: none
 
 }
 
 .life{
-    color: bisque; 
+    color: bisque;
+    margin-right: 100px;
+    display:inline
+}
+.timer{
+    color: bisque;
+    margin-left: 100px;
+    display:inline
 }
 
 table {
     margin: auto;
+    margin-top: calc(10% );
 }
 
 .cell {
@@ -44,10 +52,6 @@ table {
     background-color: red;
 }
 
-.test{
-    background-color: aquamarine;
-}
-
 .modal {
     display: none;
     border: solid 3px grey;
@@ -62,6 +66,7 @@ table {
     left: calc(50% - 150px);
   }
 
+
   .reset-btn {
     margin-top: 20px;
     background-color: rgb(223, 229, 229);
@@ -69,4 +74,18 @@ table {
     color: rgb(40, 38, 38);
     padding: 0px;
     cursor:default;
+    
+  }
+
+  .difficulty{
+    background-color: rgb(222, 226, 228);
+    transition: 1s
+    
+  }
+
+  .difficulty:hover{
+    background-color: rgb(10, 146, 214);
+  }
+  .close-difficulty{
+    float: right;
   }
