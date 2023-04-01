@@ -4,18 +4,19 @@ function getRandomInt(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min) + min); // The maximum is exclusive and the minimum is inclusive
-  }
+}
 
-  function copyMat(mat) {
+function copyMat(mat) {
     var newMat = []
     for (var i = 0; i < mat.length; i++) {
         newMat[i] = []
         for (var j = 0; j < mat[0].length; j++) {
-            newMat[i][j] = mat[i][j]
+            newMat[i][j] = { ...mat[i][j] }
         }
     }
     return newMat
 }
+
 
 function getRandomColor() {
     var letters = '0123456789ABCDEF'
@@ -26,10 +27,11 @@ function getRandomColor() {
     return color
 }
 
-function renderCell(locationI,locationJ, value) {
+function renderCell(locationI, locationJ, value) {
     // Select the elCell and set the value
     const elCell = document.querySelector(`.cell-${locationI}-${locationJ}`)
     elCell.innerHTML = value
+    
 }
 
 function disableClick() {
@@ -40,5 +42,8 @@ function disableClick() {
 }
 
 function onHandleKey(ev) {
-    if (ev.key === 'Escape') onCloseModalDifficulty()
+    if (ev.key === 'Escape'){
+         onCloseModalDifficulty()
+         onCloseModalPlayerHelp()
+}
 }

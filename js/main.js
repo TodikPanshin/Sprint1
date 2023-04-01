@@ -4,10 +4,12 @@ const BUTTON_DIF = '😼'
 const BUTTON_HURT = '😿'
 const BUTTON_WIN = '😻'
 const BUTTON_CLICKED = '😺'
-
+const HINT_ON_IMG = "url('img/light_on.png')"
+const HINT_OFF_IMG = "url('img/light_off.png')"
 
 
 var gBoard
+var gBoards
 var gLevel
 var gGame
 var gPlayerHelp
@@ -17,7 +19,6 @@ var gIntervalTime
 var gShowTimeInterval
 var gInterval
 var gResetBtnTimeout
-
 
 function onInit() {
     gGame = {
@@ -29,22 +30,27 @@ function onInit() {
         secsPassed: 0
     }
     gPlayerHelp = {
-        hintsCount: 3,
-        isHintOn: false
+        help: false,
+        hintsBtnNum: 0,
+        isHintOn: false,
+        safeClickCount: 3
     }
 
     if (!gLevel) onlevel()
 
     resetBtn()
     lifeCount()
+    SafeClickCount()
+    resetHintBtn()
+    gBoards=[]
     gShowTimeInterval = setInterval(showTime, 10)
     gBoard = buildBoard(gLevel)
     // showBoard()
-    // addMines(2 )
+    gBoards.push(copyMat(gBoard))
     renderBoard(gBoard, '.board-con')
     // console.log(gBoard)
     disableClick()
-    gInterval = setInterval(renderTestStuff, 10)
+    // gInterval = setInterval(renderTestStuff, 10)
 
 }
 
@@ -115,7 +121,7 @@ function renderBoard(mat, selector) {
         strHTML += '<tr>'
         for (var j = 0; j < mat[0].length; j++) {
 
-            const cell = gBoard[i][j]
+            const cell = mat[i][j]
             const className = `cell cell-${i}-${j}`
             const isShown = (cell.isShown) ? 'shown' : ''
             const isMarked = (cell.isMarked) ? 'marked' : ''
@@ -146,13 +152,13 @@ function renderBoard(mat, selector) {
 function onCellClicked(elCell, i, j) {
     const currCell = gBoard[i][j]
     if (!gGame.isOn) return
-
-    if (gPlayerHelp.isHintOn) {
+    
+    if (gPlayerHelp.help) {
+        if (!gPlayerHelp.isHintOn) return
+        gPlayerHelp.isHintOn = false
         checkHint(gBoard, i, j)
-        onHintOff()
         return
     }
-
     if (currCell.isMarked) return
     if (!currCell.isShown && !currCell.isMine) {
         currCell.isShown = !currCell.isShown
@@ -170,18 +176,18 @@ function onCellClicked(elCell, i, j) {
         lifeCheck()
     }
 
-
+    gBoards.push(copyMat(gBoard))
     renderBoard(gBoard, '.board-con')
-    // renderStuff()
     checkIfWin()
 
 }
 
 function onCellMarked(elCell, i, j) {
     if (!gGame.isOn) return
+    if (gGame.secsPassed === 0) return
+    if (gPlayerHelp.help) return
     const currCell = gBoard[i][j]
     if (currCell.isShown) return
-
     if (!currCell.isMarked) {
         currCell.isMarked = true
         gGame.markedCount++
@@ -196,8 +202,6 @@ function onCellMarked(elCell, i, j) {
     }
     elCell.classList.toggle('marked')
     renderCell(i, j, '')
-    // console.log(currCell)
-    // renderStuff()
     checkIfWin()
 }
 
@@ -212,6 +216,7 @@ function onReset() {
     clearInterval(gShowTimeInterval)
     clearInterval(gInterval)
     stopTimer()
+    resetHintBtn()
     onInit()
 
 }
@@ -324,6 +329,22 @@ function onOpenModalDifficulty() {
     elModal.style.display = 'block'
 }
 
+function onCloseModalPlayerHelp() {
+    const elModal = document.querySelector('.modal-player-help')
+    elModal.style.display = 'none'
+    setTimeout(() => {
+        gPlayerHelp.help = false
+    }, 2000); 
+}
+
+function onOpenModalPlayerHelp() {
+    if (gGame.secsPassed === 0) return
+    if(gPlayerHelp.help) return
+    var elModal = document.querySelector('.modal-player-help')
+    elModal.style.display = 'block'
+    gPlayerHelp.help=true
+}
+
 //>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 function showBoard() {
@@ -341,7 +362,7 @@ function renderTestStuff() {
     var elDiv = document.querySelector('.test-stuff')
     // console.log(elDiv)
     elDiv.innerHTML = `shown cells: ${gGame.shownCount} marked cells: ${gGame.markedCount}
-     marked correct: ${gGame.markedcorrect} `
+     marked correct: ${gGame.markedcorrect} hint: ${gPlayerHelp.hintsCount} `
 
 }
 
@@ -372,9 +393,9 @@ function formatTime(time) {
     return (time < 10 ? '0' : '') + time
 }
 
-// >>>>>>>>>>>unfinished
+// >>>>>>>>>>>player help
 function checkHint(board, posi, posj) {
-    const negBord = copyMat(board)
+    var negBord = copyMat(board)
     for (var i = posi - 1; i <= posi + 1; i++) {
         if (i < 0 || i >= negBord.length) continue;
         for (var j = posj - 1; j <= posj + 1; j++) {
@@ -382,23 +403,84 @@ function checkHint(board, posi, posj) {
             const currCell = negBord[i][j]
             if (!currCell.isShown) currCell.isShown = true
         }
-    } renderBoard(negBord, '.board-con')
+    }
+    // console.log(negBord)
+    renderBoard(negBord, '.board-con')
+
     setTimeout(() => {
         renderBoard(gBoard, '.board-con')
-
-    }, 1000)
-
+        // console.log(gBoard)
+        onHintOff()
+    }, 2000)
 
 }
 
-function onHintOn() {
+function onHintOn(elBtn, num) {
+    if (gGame.secsPassed === 0) return
+    if (gPlayerHelp.help) return
+    if (gPlayerHelp.isHintOn) return
     console.log('on')
+    elBtn.style.backgroundImage = HINT_ON_IMG
+
+    gPlayerHelp.help = true
     gPlayerHelp.isHintOn = true
-    
+    gPlayerHelp.hintsBtnNum = num
 }
 
 function onHintOff() {
+    const elBtn = document.querySelector(`.btn${gPlayerHelp.hintsBtnNum}`)
+    elBtn.style.display = 'none'
+
     console.log('off')
-    gPlayerHelp.isHintOn = false
+    gPlayerHelp.help = false
 }
 
+function resetHintBtn() {
+    var elHintBtns = document.querySelectorAll('.hint-btn')
+    // console.log(elHintBtns)
+    for (var i = 0; i < elHintBtns.length; i++) {
+        elHintBtns[i].style.display = 'inline'
+        elHintBtns[i].style.backgroundImage = HINT_OFF_IMG
+    }
+
+}
+
+function onSafeClick() {
+    if (gPlayerHelp.safeClickCount === 0) return
+    // if(gPlayerHelp.)
+    gPlayerHelp.safeClickCount--
+    onCloseModalPlayerHelp()
+    console.log('on')
+    SafeClickCount()
+    const saveCell = getEmptyPos()
+    const elCell = document.querySelector(`.cell-${saveCell.i}-${saveCell.j}`)
+    elCell.classList.add('safe-clicked')
+
+    renderCell(saveCell.i, saveCell.j, '')
+
+    setTimeout(() => {
+        elCell.classList.remove('safe-clicked')
+        gPlayerHelp.help = false
+        console.log('off')
+        renderCell(saveCell.i, saveCell.j, '') 
+    }, 2000);
+
+}
+function SafeClickCount() {
+    var elSafeClick = document.querySelector('.safe-click-btn span')
+    elSafeClick.innerHTML = gPlayerHelp.safeClickCount
+
+
+}
+//>>>>>>>>>>>>>>>>>>>>> UNFINISHED
+function onUndo(){
+    if (!gGame.isOn) return
+    onCloseModalPlayerHelp()
+
+    if(gBoards.length===0)return alert('its the beginning')
+    var lastPressBoard=gBoards.pop()
+    console.log(gBoards)
+    // console.log(lastPressBoard)
+    gBoard=lastPressBoard
+    renderBoard(gBoard,'.board-con')
+}

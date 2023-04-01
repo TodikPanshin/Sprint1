@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,29 +10,49 @@
 </head>
 
 <body onload="onInit()" onkeyup="onHandleKey(event)">
-<h1>Doooom</h1>
-<div class="modal-buttons">
-    <button class="difficulty" onclick="onOpenModalDifficulty()">Difficulty</button>
-</div>
-<div class="test-stuff" ></div>
-<!-- <div><button onclick="onHintOn()">hint</button></div> -->
-<div><button class="reset-btn" onclick="onReset()"></button>
-</div>
+    <h1>Doooom</h1>
 
-<div class="life">Life Left: <span class="counter-life"></span></div>
-<div class="timer">Time: <span class="counter-timer">0</span></div>
-<div class="board-con"></div>
+    <div class="modal-buttons">
+        <button class="difficulty" onclick="onOpenModalDifficulty()">Difficulty</button>
+        <button class="player-help" onclick="onOpenModalPlayerHelp()">HELP</button>
+    </div>
 
-<div class="modal modal-difficulty">
-<button class="difficulty close-difficulty" onclick="onCloseModalDifficulty()">x</button>   
- <h2>Choose difficulty</h2>
-    <button class="difficulty" onclick="onInit(onlevel(1))">Beginner</button>
-    <button class="difficulty" onclick="onInit(onlevel(2))">Medium</button>
-    <button class="difficulty" onclick="onInit(onlevel(3))">Expert</button>
-</div>
+    <div class="test-stuff"></div>
+    <div class="safe-click">
+        
+    </div>
+    <div class="hint">
+        <button class="hint-btn btn1" onclick="onHintOn(this,1)"></button>
+        <button class="hint-btn btn2" onclick="onHintOn(this,2)"></button>
+        <button class="hint-btn btn3" onclick="onHintOn(this,3)"></button>
+    </div>
+
+    <div>
+        <button class="reset-btn" onclick="onReset()"></button>
+    </div>
+
+    <div class="life">Life Left: <span class="counter-life"></span></div>
+    <div class="timer">Time: <span class="counter-timer">0</span></div>
+    <div class="board-con"></div>
+
+    <div class="modal modal-difficulty">
+        <button class="difficulty close-difficulty" onclick="onCloseModalDifficulty()">x</button>
+        <h2>Choose difficulty</h2>
+        <button class="difficulty" onclick="onInit(onlevel(1))">Beginner</button>
+        <button class="difficulty" onclick="onInit(onlevel(2))">Medium</button>
+        <button class="difficulty" onclick="onInit(onlevel(3))">Expert</button>
+    </div>
+
+    <div class=" modal modal-player-help">
+        <button class="player-help close-player-help" onclick="onCloseModalPlayerHelp()">x</button>
+        <h2>Help Stuff</h2>
+        <button class="player-help safe-click-btn" onclick="onSafeClick()">Safe Clicks Left: <span></span></button>
+        <button class="player-help safe-click-btn" onclick="onUndo()">Undo</button>
+    </div>
 
 
     <script src="js/util.js"></script>
     <script src="js/main.js"></script>
 </body>
+
 </html>

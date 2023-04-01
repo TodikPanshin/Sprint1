@@ -6,26 +6,43 @@ body {
     box-sizing: border-box
 }
 
-.test-stuff{
+.test-stuff {
     color: bisque;
     display: none
-
 }
 
-.life{
+.life {
     color: bisque;
     margin-right: 100px;
-    display:inline
+    display: inline
 }
-.timer{
+
+.timer {
     color: bisque;
     margin-left: 100px;
-    display:inline
+    display: inline
+}
+.hint{
+    margin-right: 300px;
+    width: 250px;
+    height: 100px;
+    
+}
+
+.hint-btn {
+    margin:10px 10px;
+    width: 50px;
+    height: 80px;
+    display: inline;
+    background-image: url(../img/light_off.png);
+    background-size: 50px 80px;
+    border: none
+    
 }
 
 table {
     margin: auto;
-    margin-top: calc(10% );
+    margin-top: calc(10%);
 }
 
 .cell {
@@ -33,23 +50,26 @@ table {
     height: 70px;
     font-size: 1.5em;
     background-color: gray;
-    cursor:default;
+    cursor: default;
     border-style: ridge;
-    border-color:black ;
+    border-color: black;
 
 }
 
 .marked {
     background-color: rgb(145, 5, 128);
-
 }
 
-.shown{
+.shown {
     background-color: antiquewhite;
 }
 
-.exploded{
+.exploded {
     background-color: red;
+}
+
+.safe-clicked {
+    background-color: rgb(42, 8, 236);
 }
 
 .modal {
@@ -60,32 +80,44 @@ table {
     background-color: rgb(222, 226, 228);
     color: rgb(228, 0, 0);
     font-size: 28px;
-  
     position: absolute;
     top: 500px;
-    left: calc(50% - 150px);
-  }
+    left: auto;
+}
 
 
-  .reset-btn {
+.reset-btn {
     margin-top: 20px;
     background-color: rgb(223, 229, 229);
     font-size: 30px;
     color: rgb(40, 38, 38);
     padding: 0px;
-    cursor:default;
-    
-  }
+    cursor: default;
 
-  .difficulty{
+}
+
+.difficulty {
     background-color: rgb(222, 226, 228);
     transition: 1s
-    
-  }
+}
 
-  .difficulty:hover{
+.difficulty:hover {
     background-color: rgb(10, 146, 214);
-  }
-  .close-difficulty{
+}
+
+.close-difficulty {
     float: right;
-  }
+}
+
+.player-help{
+    background-color: rgb(222, 226, 228);
+    transition: 1s
+}
+
+.player-help:hover{
+    background-color: rgb(8, 220, 57);
+}
+
+.close-player-help{
+    float: right;
+}
